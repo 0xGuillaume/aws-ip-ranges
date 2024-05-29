@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -f ./awsip ]; then
-    mv ./awsip /usr/local/bin
+    sudo mv ./awsip /usr/local/bin
 
 else
     curl https://raw.githubusercontent.com/0xGuillaume/aws-ip-ranges/main/awsip -o /tmp/awsip
