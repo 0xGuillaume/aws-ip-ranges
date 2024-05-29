@@ -3,9 +3,9 @@
 AWS is sharing public IP address used by its services for easily identify traffic from AWS. This information is helpful to allow or deny traffic to or from AWS services.
 
 > [!NOTE]
-> This tool has been primarly built to easily identify `EC2_INSTANCE_CONNECT` service CIDR to allow connection from the AWS console.
+> This tool has been primarily built to easily identify `EC2_INSTANCE_CONNECT` service CIDR to allow connection from the AWS console.
 
-AWS current IP address are published in `JSON` format is accessible at this [address](https://ip-ranges.amazonaws.com/ip-ranges.json). For more information you can check this [documentation](https://raw.githubusercontent.com/0xGuillaume/aws-ip-ranges/main/install.sh).
+AWS current IP address are published in `JSON` format and accessible at this [address](https://ip-ranges.amazonaws.com/ip-ranges.json). For more information you can check this [documentation](https://raw.githubusercontent.com/0xGuillaume/aws-ip-ranges/main/install.sh).
 
 
 ## Install
@@ -13,10 +13,12 @@ AWS current IP address are published in `JSON` format is accessible at this [add
 If you clone the repo locally run `install.sh` under the project folder. 
 
 ```bash
+cd ./aws-ip-ranges
+
 ./install.sh
 ```
 
-Otherwise you can run the script "remotely" by curling it and then execute it.
+Otherwise you can run the script _remotely_.
 
 ```bash
 curl https://raw.githubusercontent.com/0xGuillaume/aws-ip-ranges/main/install.sh | sh
@@ -24,7 +26,9 @@ curl https://raw.githubusercontent.com/0xGuillaume/aws-ip-ranges/main/install.sh
 
 ## How to
 
-Once `awsip` file **downloaded** and **installed** you can use it by querying the **service** you would like to get CIDR using the required `-s` or `--service` flag.
+Once `awsip` **installed** you can use it by querying the **service** you would like to get the CIDR from by using the required `-s` or `--service` flag.
+
+### Services
 
 ```bash
 awsip -s SERVICE
@@ -42,6 +46,8 @@ This way CIDRs for **all** AWS regions will be printed.
 10.0.0.2/29
 10.0.0.3/29
 ```
+
+### Regions
 
 If you would like to know the CIDR for a **specifi** region, use the `-r` or `--region` flag.
 
@@ -64,4 +70,12 @@ awsip -s EC2_INSTANCE_CONNECT -r eu-west-1 -f | jq
   "service": "EC2_INSTANCE_CONNECT",
   "network_border_group": "eu-west-1"
 }
+```
+
+### Help
+
+Feel free to use the help (`-h` or `--help`) to get services and regions **available in this tool**.
+
+```bash
+awsip --help
 ```
