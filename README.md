@@ -24,6 +24,9 @@ Otherwise you can run the script _remotely_.
 curl https://raw.githubusercontent.com/0xGuillaume/aws-ip-ranges/main/install.sh | sh
 ```
 
+> [!WARNING]
+> `sudo` password is asked to move the script under `/usr/local/bin` in order to be run anywhere.
+
 ## How to
 
 Once `awsip` **installed** you can use it by querying the **service** you would like to get the CIDR from by using the required `-s` or `--service` flag.
