@@ -1,6 +1,7 @@
 #!/bin/bash
 
 if [ -f ./awsip ]; then
+    echo "[INFO] sudo required to move awsip to /usr/local/bin"
     sudo mv ./awsip /usr/local/bin
 
 else
