@@ -49,7 +49,7 @@ This way CIDRs for **all** AWS regions will be printed.
 
 ### Regions
 
-If you would like to know the CIDR for a **specifi** region, use the `-r` or `--region` flag.
+If you would like to know the CIDR for a **specific** region, use the `-r` or `--region` flag.
 
 ```bash
 awsip -s EC2_INSTANCE_CONNECT -r eu-west-1
