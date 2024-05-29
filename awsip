@@ -80,8 +80,8 @@ def raw_data() -> dict:
         response = requests.get(URL).json()["prefixes"]
         return response
 
-    except:
-        exit("[ERROR] GET Request failed.")
+    except requests.exceptions.HTTPError as error:
+        exit(f"[ERROR] {error}.")
 
 
 def service(args) -> list:
@@ -92,9 +92,9 @@ def service(args) -> list:
     """
 
     prefixes = []
-    
+
     for prefix in raw_data():
-        if prefix["service"] == args.service :
+        if prefix["service"] == args.service:
 
             if prefix["region"] == args.region:
                 return [prefix]
@@ -104,7 +104,7 @@ def service(args) -> list:
     return prefixes
 
 
-def output(services:list, full:bool) -> None:
+def output(services: list, full: bool) -> None:
     """Print AWS IP ranges prefix output.
 
     Args:
@@ -120,15 +120,19 @@ def output(services:list, full:bool) -> None:
         print(service["ip_prefix"])
 
 
+def help(choices: list, message: str) -> str:
+    """Display a help message with available choices
+    for command line arguments.
 
-def help() -> str:
-    """."""
+    Args:
+        choices: A list indicating available choices.
+        message: A string explaining the argument purpose.
+    """
 
-    output = ""
+    output = f"{message}\n"
 
     for service in SERVICES:
-        output += f"{service}\n"
-
+        output += f"\t{service}\n"
 
     return output
 
@@ -140,37 +144,40 @@ if __name__ == "__main__":
         usage="awsir -s SERVICE -r region-code",
         formatter_class=argparse.RawTextHelpFormatter,
         description=(
-            f"A tool to parse official AWS service IP ranges available at : {URL}. "
+            f"A tool to parse official AWS services IP range availables at : {URL}. "
             "By passing a service as an argument, it outputs the service's "
             "IP range for all regions or a specific one. See usage example above."
         )
     )
 
     parser.add_argument(
-        "-s", 
-        "--service", 
-        choices=SERVICES, 
-        help=help(),
-        #help="AWS Service name (UPPERCASE).",
+        "-s",
+        "--service",
+        choices=SERVICES,
+        help=help(
+            SERVICES,
+            "[REQUIRED] AWS Service name (UPPERCASE). See availables :"
+        ),
         required=True,
-        metavar=None
+        metavar=""
     )
 
     parser.add_argument(
-        "-r", 
-        "--region", 
-        choices=REGIONS, 
-        help="AWS Region code name."
+        "-r",
+        "--region",
+        choices=REGIONS,
+        help=help(REGIONS, "AWS Region code name. See availables :"),
+        metavar=""
     )
 
     parser.add_argument(
-        "-f", 
-        "--full", 
+        "-f",
+        "--full",
         default=False,
         action=argparse.BooleanOptionalAction,
         help="Output the full JSON object of the IP range prefix."
     )
 
-    args = parser.parse_args() 
+    args = parser.parse_args()
 
     output(service(args), args.full)
