@@ -1,0 +1,176 @@
+#!/bin/python3
+import argparse
+import requests
+import json
+
+
+URL = "https://ip-ranges.amazonaws.com/ip-ranges.json"
+
+REGIONS = [
+    "GLOBAL",
+    "af-south-1",
+    "ap-east-1",
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-northeast-3",
+    "ap-south-1",
+    "ap-south-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-southeast-3",
+    "ap-southeast-4",
+    "ap-southeast-5",
+    "ap-southeast-6",
+    "ca-central-1",
+    "ca-west-1",
+    "cn-north-1",
+    "cn-northwest-1",
+    "eu-central-1",
+    "eu-central-2",
+    "eu-north-1",
+    "eu-south-1",
+    "eu-south-2",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "eusc-de-east-1",
+    "il-central-1",
+    "me-central-1",
+    "me-south-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-gov-east-1",
+    "us-gov-west-1",
+    "us-west-1",
+    "us-west-2",
+]
+
+SERVICES = [
+    "AMAZON",
+    "AMAZON_APPFLOW",
+    "AMAZON_CONNECT",
+    "API_GATEWAY",
+    "CHIME_MEETINGS",
+    "CHIME_VOICECONNECTOR",
+    "CLOUD9",
+    "CLOUDFRONT",
+    "CLOUDFRONT_ORIGIN_FACING",
+    "CODEBUILD",
+    "DYNAMODB",
+    "EBS",
+    "EC2",
+    "EC2_INSTANCE_CONNECT",
+    "GLOBALACCELERATOR",
+    "KINESIS_VIDEO_STREAMS",
+    "MEDIA_PACKAGE_V2",
+    "ROUTE53",
+    "ROUTE53_HEALTHCHECKS",
+    "ROUTE53_HEALTHCHECKS_PUBLISHING",
+    "ROUTE53_RESOLVER",
+    "S3",
+    "WORKSPACES_GATEWAYS",
+]
+
+
+def raw_data() -> dict:
+    """Fetch AWS IP ranges JSON file."""
+
+    try:
+        response = requests.get(URL).json()["prefixes"]
+        return response
+
+    except:
+        exit("[ERROR] GET Request failed.")
+
+
+def service(args) -> list:
+    """Get service(s) prefix or service(s) IP only.
+
+    Args:
+        args: Argparse arguments object.
+    """
+
+    prefixes = []
+    
+    for prefix in raw_data():
+        if prefix["service"] == args.service :
+
+            if prefix["region"] == args.region:
+                return [prefix]
+
+            prefixes.append(prefix)
+
+    return prefixes
+
+
+def output(services:list, full:bool) -> None:
+    """Print AWS IP ranges prefix output.
+
+    Args:
+        services: A list of services to parse.
+        full: A boolean indicating the output format.
+    """
+
+    for service in services:
+        if full:
+            print(json.dumps(service))
+            continue
+
+        print(service["ip_prefix"])
+
+
+
+def help() -> str:
+    """."""
+
+    output = ""
+
+    for service in SERVICES:
+        output += f"{service}\n"
+
+
+    return output
+
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(
+        prog="Programme foo",
+        usage="awsir -s SERVICE -r region-code",
+        formatter_class=argparse.RawTextHelpFormatter,
+        description=(
+            f"A tool to parse official AWS service IP ranges available at : {URL}. "
+            "By passing a service as an argument, it outputs the service's "
+            "IP range for all regions or a specific one. See usage example above."
+        )
+    )
+
+    parser.add_argument(
+        "-s", 
+        "--service", 
+        choices=SERVICES, 
+        help=help(),
+        #help="AWS Service name (UPPERCASE).",
+        required=True,
+        metavar=None
+    )
+
+    parser.add_argument(
+        "-r", 
+        "--region", 
+        choices=REGIONS, 
+        help="AWS Region code name."
+    )
+
+    parser.add_argument(
+        "-f", 
+        "--full", 
+        default=False,
+        action=argparse.BooleanOptionalAction,
+        help="Output the full JSON object of the IP range prefix."
+    )
+
+    args = parser.parse_args() 
+
+    output(service(args), args.full)
