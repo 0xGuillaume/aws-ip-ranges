@@ -131,8 +131,8 @@ def help(choices: list, message: str) -> str:
 
     output = f"{message}\n"
 
-    for service in SERVICES:
-        output += f"\t{service}\n"
+    for choice in choices:
+        output += f"\t{choice}\n"
 
     return output
 
